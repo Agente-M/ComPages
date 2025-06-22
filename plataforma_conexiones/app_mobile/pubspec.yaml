@@ -1,0 +1,13 @@
+name: plataforma_conexiones
+description: Aplicación móvil para la plataforma de conexiones dinámicas
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+dependencies:
+  flutter:
+    sdk: flutter
+  http: any
+  socket_io_client: any
+  provider: any
+  flutter_secure_storage: any
+  image_picker: any
+  firebase_messaging: any

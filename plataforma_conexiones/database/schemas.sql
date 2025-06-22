@@ -1,0 +1,2 @@
+-- Esquema de la base de datos
+-- TODO: añadir tablas necesarias
