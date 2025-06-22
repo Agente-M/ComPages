@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2
+pydantic
+python-jose
+bcrypt
+redis
+python-socketio
+deepface
+opencv-python
