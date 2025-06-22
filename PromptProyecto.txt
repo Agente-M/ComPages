@@ -1,0 +1,129 @@
+# Proyecto “Plataforma de Conexiones Dinámicas”
+
+## Descripción general
+Creamos una aplicación móvil multiplataforma (Android + iOS) + backend en Python que facilite **conexiones humanas auténticas, seguras y contextuales**. El sistema soporta:
+- Modos de activación: **RAID** (zonas de alta conexión) y **Presencia Manual** (radio máximo 30 km).
+- Detección de **Presencia Fuera de Zona Habitacional**, mostrando “este usuario no reside en esta zona” sin revelar coordenadas exactas.
+- **Actividades grupales y raids temáticos** (biking, skate, senderismo, cine, raves, pedas, eventos deportivos, networking académico/profesional), gestionados por hosts con suscripción o pago único.
+- **Interacciones controladas**: 1 mensaje directo por persona, pings sutiles, likes.
+- **Modo Pasajero** (conexiones temporales de 12–24 h con cierre mutuo y “segunda oportunidad” para usuarios premium).
+- **Seguridad y moderación**: verificación facial, detección de IA en imágenes, historial de reputación y bloqueo automático.
+- **Modelo de negocio Freemium/Premium**: funciones básicas gratis, premium para reintentos, filtros avanzados, visibilidad extendida, “segunda oportunidad”, y monetización de raids/eventos.
+
+## Stack tecnológico
+- **Frontend móvil**: Flutter (Dart), pantallas y widgets para registro, login, home, perfil, modo RAID, modo manual, vista de raids, chat, notificaciones push.
+- **Backend**: FastAPI (Python), PostgreSQL, JWT/OAuth2, Bcrypt, Pydantic.
+- **Almacenamiento de medios**: Amazon S3 (o equivalente).
+- **Chat en tiempo real**: Socket.IO + Redis.
+- **Verificación facial & anti-IA**: Python + OpenCV + DeepFace.
+- **Pagos**: Stripe o MercadoPago.
+- **Despliegue**: Docker, Kubernetes (opcional), CI/CD.
+
+## Estructura de carpetas propuesta
+
+plataforma_conexiones/
+│
+├── app_mobile/ # Flutter (Dart)
+│ ├── lib/
+│ │ ├── main.dart
+│ │ ├── screens/ # login.dart, home.dart, perfil.dart, raid.dart...
+│ │ ├── widgets/ # botones, tarjetas de usuario, etc.
+│ │ ├── models/ # User.dart, Raid.dart, Message.dart...
+│ │ └── services/ # api_service.dart, auth_service.dart...
+│ └── pubspec.yaml
+│
+├── backend_api/ # FastAPI (Python)
+│ ├── main.py # arranque de la API
+│ ├── config.py # settings (BD, S3, JWT secret)
+│ ├── models/ # SQLAlchemy / Pydantic schemas
+│ ├── routers/ # auth.py, perfil.py, conexion.py, chat.py...
+│ ├── services/ # user_service.py, raid_service.py...
+│ ├── middleware/ # logging, cors, rate_limit...
+│ └── utils/ # hashing.py, tokens.py, email_utils.py
+│
+├── database/ # scripts y utilitarios de BD
+│ ├── schemas.sql
+│ └── init_db.py
+│
+├── realtime_chat/ # Socket.IO server + Redis
+│ └── socket_server.py
+│
+├── verification_ai/ # DeepFace / OpenCV
+│ ├── face_validation.py
+│ ├── detect_synthetic.py
+│ └── test_images/
+│
+├── media_service/ # S3 upload/download
+│ └── s3_client.py
+│
+├── premium/ # lógica de suscripción
+│ ├── payment.py
+│ ├── benefits.py
+│ └── second_chance.py
+│
+├── docs/ # documentación y diagramas
+│ ├── arquitectura.md
+│ ├── codigo_etica.md
+│ └── diagramas_flowchart/
+│
+├── Dockerfile
+├── docker-compose.yml
+└── README.md
+
+
+## Módulos detallados
+
+1. **auth**  
+   - `registro.py`: validación de email, creación de usuario.  
+   - `login.py`: JWT/OAuth2.  
+   - `verificacion_facial.py`: captura y envío de selfie a backend.
+
+2. **perfil**  
+   - `datos_personales.py`: género, orientación, fotos.  
+   - `intencion.py`: cita, amistad, networking, pasajero.  
+   - `zona_habitacional.py`: definir residencia y detección de movilidad.
+
+3. **conexion**  
+   - `activacion.py`: RAID detectado (GPS/geofence) y modo manual.  
+   - `presencia.py`: lógica de “fuera de zona habitacional”.  
+   - `algoritmo_match.py`: filtros por distancia ≤ 30 km, intención, historial.
+
+4. **interaccion**  
+   - `mensaje.py`: un solo mensaje inicial.  
+   - `reaccion.py`: pings sutiles y likes.  
+   - `chat_temporal.py`: chats con temporizador y cierre mutuo.
+
+5. **actividad**  
+   - `crear_raid.py`: hosts generan raids (pago/suscripción).  
+   - `unirse_grupo.py`: confirmar asistencia y activar modo grupal.  
+   - `gestionar_grupo.py`: moderación, invitaciones, notificaciones.
+
+6. **historial**  
+   - `registro_conexiones.py`: almacenar matches.  
+   - `bloqueo.py`: bloqueo y reportes.  
+   - `reporte.py`: gestión de denuncias y apelaciones.
+
+7. **moderacion**  
+   - `deteccion_ia.py`: analizar imágenes sospechosas.  
+   - `verificacion_rostro.py`: comparar selfie vs foto de perfil.  
+   - `anti_fraude.py`: lógica adicional de detección de bots.
+
+8. **premium**  
+   - `payment.py`: integrar Stripe/MercadoPago.  
+   - `benefits.py`: habilitar reintentos y filtros avanzados.  
+   - `second_chance.py`: lógica de “segunda oportunidad” de match.
+
+## Requerimientos (requirements.txt / pubspec.yaml)
+
+- Python: `fastapi`, `uvicorn`, `sqlalchemy`, `psycopg2`, `pydantic`, `python-jose`, `bcrypt`, `redis`, `python-socketio`, `deepface`, `opencv-python`
+- Dart/Flutter: `flutter`, `http`, `socket_io_client`, `provider`, `flutter_secure_storage`, `image_picker`, `firebase_messaging`
+
+---
+
+**Instrucciones para Codex**  
+- Genera los archivos base en cada carpeta según la estructura.  
+- En `backend_api/main.py`, define rutas de ejemplo para registro y login.  
+- En Flutter, genera `main.dart` con navegación inicial y pantalla de login.  
+- Añade comentarios TODO en cada módulo para guiar el desarrollo de la lógica interna.
+
+> **¡Listo para comenzar a iterar con Codex!** Copia este prompt y empieza a generar el esqueleto de tu proyecto.
